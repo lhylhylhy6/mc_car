@@ -13,10 +13,15 @@
 #define DBG_TAG "main"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
+#include "car_pwm.h"
+
 
 int main(void)
 {
     int count = 1;
+    pwm_init();
+    my_pwm_enable();
+
 
     while (count++)
     {
