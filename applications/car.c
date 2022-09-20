@@ -58,5 +58,5 @@ int car_back(void)
     return RT_EOK;
 }
 
-int car_stop
+int car_stop(void);
 

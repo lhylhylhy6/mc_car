@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-
+#include "uart2.h"
 #define DBG_TAG "main"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -19,8 +19,6 @@
 int main(void)
 {
     int count = 1;
-    pid_uart_init();
-
 
     while (count++)
     {
