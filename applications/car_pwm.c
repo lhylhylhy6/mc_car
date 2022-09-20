@@ -22,7 +22,7 @@ struct rt_device_pwm * pwm1 = RT_NULL;
 struct rt_device_pwm * pwm2 = RT_NULL;
 
 rt_uint32_t period = 1000000 ;
-float pulse_percent = 50;
+rt_uint32_t pulse = 50;
 
 int pwm_init(void)
 {
@@ -31,7 +31,7 @@ int pwm_init(void)
     pwm2 = (struct rt_device_pwm *)rt_device_find(PWM_DEVICE_NAME2);
     if(pwm1)
     {
-        ret = rt_pwm_set(pwm1, PWM_CHANNEL1, period, (rt_uint32_t)((period*pulse_percent)/100));
+        ret = rt_pwm_set(pwm1, PWM_CHANNEL1, period, (period*pulse)/100);
         if(ret<0)
             LOG_D("ret1: %d\r\n",ret);
         rt_pwm_enable(pwm1, PWM_CHANNEL1);
@@ -39,7 +39,7 @@ int pwm_init(void)
     ret = RT_EOK;
     if(pwm2)
     {
-        ret = rt_pwm_set(pwm2, PWM_CHANNEL2, period, (rt_uint32_t)((period*pulse_percent)/100));
+        ret = rt_pwm_set(pwm2, PWM_CHANNEL2, period, (period*pulse)/100);
         if(ret<0)
             LOG_D("ret2: %d\r\n",ret);
         rt_pwm_enable(pwm2, PWM_CHANNEL2);

@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include "uart2.h"
+#include "car.h"
 #define DBG_TAG "main"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -18,13 +19,21 @@
 
 int main(void)
 {
-    int count = 1;
 
-    while (count++)
+    pid_uart_init();
+    car_init();
+    while (1)
     {
-        LOG_D("Hello RT-Thread!");
+
         rt_thread_mdelay(1000);
     }
 
     return RT_EOK;
 }
+
+int restart(void)
+{
+    rt_hw_cpu_reset();
+    return RT_EOK;
+}
+MSH_CMD_EXPORT(restart , restart);

@@ -14,6 +14,7 @@
 #include "car_pwm.h"
 #include "uart2.h"
 #include "stdlib.h"
+#include "car.h"
 
 int pid_init(void);
 

@@ -13,10 +13,22 @@
 #include <rtdevice.h>
 #include "drivers\include\drv_common.h"
 
-#define AIN1_PIN GET_PIN(F, 6)
-#define AIN2_PIN GET_PIN(F, 7)
-#define BIN1_PIN GET_PIN(F, 8)
-#define BIN2_PIN GET_PIN(F, 9)
+extern int pulse;
+
+//设置车的基本速度
+int car_set_percent(int argc,char **argv)
+{
+    if(argc != 2)
+    {
+        rt_kprintf("please input car_set_percent <percent>\r\n");
+        return -RT_ERROR;
+    }
+    else {
+        pulse = atoi(argv[1]);
+    }
+    return RT_EOK;
+}
+MSH_CMD_EXPORT(car_set_percent , car set percent);
 
 int car_init(void)
 {
@@ -33,7 +45,7 @@ int car_init(void)
     rt_pin_write(BIN2_PIN, PIN_LOW);
 
     ret = pwm_init();
-    //pid_init();
+    pid_init();
 
     return ret;
 }
@@ -47,7 +59,7 @@ int car_forward(void)
     my_pwm_enable();
     return RT_EOK;
 }
-
+MSH_CMD_EXPORT(car_forward,car forward);
 int car_back(void)
 {
     rt_pin_write(AIN1_PIN, PIN_LOW);
@@ -58,5 +70,13 @@ int car_back(void)
     return RT_EOK;
 }
 
-int car_stop(void);
-
+int car_stop(void)
+{
+    rt_pin_write(AIN1_PIN, PIN_LOW);
+    rt_pin_write(AIN2_PIN, PIN_LOW);
+    rt_pin_write(BIN1_PIN, PIN_LOW);
+    rt_pin_write(BIN2_PIN, PIN_LOW);
+    my_pwm_disable();
+    return RT_EOK;
+}
+MSH_CMD_EXPORT(car_stop,car stop);

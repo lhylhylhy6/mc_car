@@ -39,14 +39,14 @@ void pid_read_entry(void *parameter)
 
                  if(ch=='[')
                  {
-                     temp_number = 0 ;
+                     //temp_number = 0 ;
                  }
                  else if(ch==']')
                  {
                      rt_mutex_take(number_protect, RT_WAITING_FOREVER);
                      number = temp_number;
                      temp_number = 0 ;
-                     rt_kprintf("%d",number);
+                     //rt_kprintf("%d",number);
                      rt_mutex_release(number_protect);
 
                  }
