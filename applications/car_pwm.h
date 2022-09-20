@@ -13,9 +13,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "string.h"
-#include "rtdbg.h"
 #include "stdlib.h"
-#include "ulog.h"
 
 
 #define PWM_DEVICE_NAME1   "pwm3"
