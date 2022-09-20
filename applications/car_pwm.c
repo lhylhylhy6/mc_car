@@ -13,6 +13,11 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+#define AIN1_PIN GET_PIN(F, 6)
+#define AIN2_PIN GET_PIN(F, 7)
+#define BIN1_PIN GET_PIN(F, 8)
+#define BIN2_PIN GET_PIN(F, 9)
+
 struct rt_device_pwm * pwm1 = RT_NULL;
 struct rt_device_pwm * pwm2 = RT_NULL;
 

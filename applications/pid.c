@@ -36,7 +36,7 @@ void pid_thread_entry(void *parameter)
         rt_mutex_take(number_protect, RT_WAITING_FOREVER);
         num = number;
         rt_mutex_release(number_protect);
-        pid_compute(num);
+        //pid_compute(num);
         rt_thread_mdelay(30);
     }
 }
