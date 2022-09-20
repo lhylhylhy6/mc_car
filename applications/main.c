@@ -19,8 +19,7 @@
 int main(void)
 {
     int count = 1;
-    pwm_init();
-    my_pwm_enable();
+    pid_uart_init();
 
 
     while (count++)

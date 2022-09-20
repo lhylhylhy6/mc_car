@@ -28,12 +28,15 @@ void pid_read_entry(void *parameter)
       static rt_uint32_t temp_number=0;
       while(1)
       {
+
           while(1)
              {
+
                  while(rt_device_read(pid_uart, -1, &ch, 1)!=1)
                  {
                      rt_sem_take(rx_sem, RT_WAITING_FOREVER);
                  }
+
                  if(ch=='[')
                  {
                      temp_number = 0 ;
@@ -43,6 +46,7 @@ void pid_read_entry(void *parameter)
                      rt_mutex_take(number_protect, RT_WAITING_FOREVER);
                      number = temp_number;
                      temp_number = 0 ;
+                     rt_kprintf("%d",number);
                      rt_mutex_release(number_protect);
 
                  }
@@ -64,6 +68,7 @@ rt_err_t pid_uart_init(void)
 {
     rt_err_t ret = RT_EOK;
     rx_sem = rt_sem_create("pid_rx", 0, RT_IPC_FLAG_PRIO);
+    number_protect = rt_mutex_create("number", RT_IPC_FLAG_PRIO);
     pid_uart = rt_device_find(pid_uart_name);
     if(pid_uart)
     {
