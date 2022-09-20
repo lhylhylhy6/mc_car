@@ -38,3 +38,25 @@ int car_init(void)
     return ret;
 }
 
+int car_forward(void)
+{
+    rt_pin_write(AIN1_PIN, PIN_HIGH);
+    rt_pin_write(AIN2_PIN, PIN_LOW);
+    rt_pin_write(BIN1_PIN, PIN_HIGH);
+    rt_pin_write(BIN2_PIN, PIN_LOW);
+    my_pwm_enable();
+    return RT_EOK;
+}
+
+int car_back(void)
+{
+    rt_pin_write(AIN1_PIN, PIN_LOW);
+    rt_pin_write(AIN2_PIN, PIN_HIGH);
+    rt_pin_write(BIN1_PIN, PIN_LOW);
+    rt_pin_write(BIN2_PIN, PIN_HIGH);
+    my_pwm_enable();
+    return RT_EOK;
+}
+
+int car_stop
+
