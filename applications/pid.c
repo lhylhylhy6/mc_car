@@ -22,10 +22,10 @@ extern struct rt_device_pwm * pwm2 ;
 
 rt_int32_t pwm_l,pwm_r;
 rt_int32_t speed;
-int middle = 155;
-float kp = 650;
-float ki = 0.0;
-float kd = 1.7;
+int middle = 142;
+float kp = 87900;
+float ki = -13;
+float kd = 20;
 float dia=0;
 
 rt_thread_t pid_thread = RT_NULL;
@@ -41,7 +41,7 @@ void pwm_limit(rt_int32_t * pwm1,rt_int32_t * pwm2)
 
 void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
 {
-    //rt_kprintf("-%d %d-\r\n",pwm_1,pwm_2);
+
     if(pwm_1<0)
         {
             rt_pin_write(AIN2_PIN, PIN_HIGH);
@@ -64,17 +64,19 @@ void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
             rt_pin_write(BIN1_PIN, PIN_HIGH);
             rt_pin_write(BIN2_PIN, PIN_LOW);
         }
-
-        pwm_limit(&pwm_1, &pwm_2);
-        static int iii=0;
-        iii++;
-        if(iii==50)
+        static int ill4 = 0;
+                ill4++;
+        if(ill4==50)
         {
             rt_kprintf("-%d %d-\r\n",pwm_1,pwm_2);
-            iii = 0;
+            ill4 = 0;
         }
-        my_pwm_set_pulse(pwm1, pwm_1);
-        my_pwm_set_pulse(pwm2, pwm_2);
+
+        pwm_limit(&pwm_1, &pwm_2);
+//        my_pwm_set_pulse(pwm1, pwm_1);
+//        my_pwm_set_pulse(pwm2, pwm_2);
+        rt_pwm_set(pwm1, PWM_CHANNEL1, period,(rt_uint32_t) pwm_1);
+        rt_pwm_set(pwm2, PWM_CHANNEL2, period,(rt_uint32_t) pwm_2);
 }
 
 
@@ -116,11 +118,13 @@ void pid_thread_entry(void *parameter)
     while(1)
     {
         speed = period*pulse/100;
+
         rt_mutex_take(number_protect, RT_WAITING_FOREVER);
         num = number;
         rt_mutex_release(number_protect);
+        dia = 0;
         pid_compute(num);
-        rt_thread_mdelay(30);
+        rt_thread_mdelay(10);
     }
 }
 
