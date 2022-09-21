@@ -53,8 +53,8 @@ void pid_read_entry(void *parameter)
                  }
                  else if(ch=='c')
                  {
-                     car_right();
                      rt_kprintf("is turn\r\n");
+                     car_right();
                  }
                  else if(ch>='0'&&ch<='9')
                  {
