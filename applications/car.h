@@ -18,5 +18,7 @@
 #define BIN2_PIN GET_PIN(F, 9)
 
 int car_init(void);
+int car_left(void);
+int car_right(void);
 
 #endif /* APPLICATIONS_CAR_H_ */

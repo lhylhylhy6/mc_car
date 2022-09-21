@@ -22,13 +22,14 @@ extern struct rt_device_pwm * pwm2 ;
 
 rt_int32_t pwm_l,pwm_r;
 rt_int32_t speed;
-int middle = 142;
+int middle = 138;
 float kp = 87900;
 float ki = -13;
 float kd = 20;
 float dia=0;
 
 rt_thread_t pid_thread = RT_NULL;
+struct rt_completion pid_completion;
 
 void pwm_limit(rt_int32_t * pwm1,rt_int32_t * pwm2)
 {
@@ -64,13 +65,13 @@ void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
             rt_pin_write(BIN1_PIN, PIN_HIGH);
             rt_pin_write(BIN2_PIN, PIN_LOW);
         }
-        static int ill4 = 0;
-                ill4++;
-        if(ill4==50)
-        {
-            rt_kprintf("-%d %d-\r\n",pwm_1,pwm_2);
-            ill4 = 0;
-        }
+//        static int ill4 = 0;
+//                ill4++;
+//        if(ill4==50)
+//        {
+//            rt_kprintf("-%d %d-\r\n",pwm_1,pwm_2);
+//            ill4 = 0;
+//        }
 
         pwm_limit(&pwm_1, &pwm_2);
 //        my_pwm_set_pulse(pwm1, pwm_1);
@@ -83,6 +84,7 @@ void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
 void pid_compute(int val)
 {
     static float error=0,ierror=0,derror=0,errorlast=0;
+
     error = middle*1.0 -val;
     ierror=ierror+error;
     derror=error-errorlast;
@@ -123,13 +125,17 @@ void pid_thread_entry(void *parameter)
         num = number;
         rt_mutex_release(number_protect);
         dia = 0;
+        rt_completion_wait(&pid_completion, RT_WAITING_FOREVER);
         pid_compute(num);
+        rt_completion_done(&pid_completion);
         rt_thread_mdelay(10);
     }
 }
 
 int pid_init(void)
 {
+    rt_completion_init(&pid_completion);
+    rt_completion_done(&pid_completion);
     pid_thread = rt_thread_create("pid_thread", pid_thread_entry, RT_NULL, 1024, 9, 300);
     if(pid_thread)
     {

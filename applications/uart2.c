@@ -8,6 +8,7 @@
  * 2022-09-20     10091       the first version
  */
 #include "uart2.h"
+#include "car.h"
 
 rt_sem_t rx_sem;
 rt_device_t pid_uart = RT_NULL;
@@ -52,6 +53,7 @@ void pid_read_entry(void *parameter)
                  }
                  else if(ch=='c')
                  {
+                     car_right();
                      rt_kprintf("is turn\r\n");
                  }
                  else if(ch>='0'&&ch<='9')
