@@ -13,9 +13,14 @@
 #include <rtdevice.h>
 #include "drivers\include\drv_common.h"
 
+#define DBG_TAG "car"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #define CAR_MSH_ENABLE 1
 
 extern int pulse;
+int arrive_flag=0;
 
 //设置车的基本速度
 int car_set_percent(int argc,char **argv)
@@ -61,14 +66,18 @@ int car_forward(void)
     my_pwm_enable();
     return RT_EOK;
 }
-
+extern int arrive_flag;
 int car_stop(void)
 {
+    LOG_D("now car is stop\r\n");
+    rt_kprintf("now car is going to stop\r\n");
     rt_pin_write(AIN1_PIN, PIN_LOW);
     rt_pin_write(AIN2_PIN, PIN_LOW);
     rt_pin_write(BIN1_PIN, PIN_LOW);
     rt_pin_write(BIN2_PIN, PIN_LOW);
     my_pwm_disable();
+    rt_kprintf("now car is stop\r\n");
+    arrive_flag = 1;
     return RT_EOK;
 }
 
@@ -147,7 +156,7 @@ int car_right(void)
     return RT_EOK;
 }
 
-extern int a;
+
 int car_turn(void)
 {
     extern struct rt_device_pwm * pwm1;
