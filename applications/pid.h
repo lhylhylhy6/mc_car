@@ -17,5 +17,6 @@
 #include "car.h"
 
 int pid_init(void);
+void pid_clear(void);
 
 #endif /* APPLICATIONS_PID_H_ */

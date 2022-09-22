@@ -15,16 +15,16 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 #include "car_pwm.h"
+#include <exti.h>
 
 
 int main(void)
 {
-
+    extern_interrupt_init();
     pid_uart_init();
     car_init();
     while (1)
     {
-
         rt_thread_mdelay(1000);
     }
 

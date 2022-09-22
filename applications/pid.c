@@ -22,10 +22,10 @@ extern struct rt_device_pwm * pwm2 ;
 
 rt_int32_t pwm_l,pwm_r;
 rt_int32_t speed;
-int middle = 138;
-float kp = 87900;
-float ki = -13;
-float kd = 20;
+int middle = 164;
+float kp = 200000;
+float ki = -2;
+float kd = 5;
 float dia=0;
 
 rt_thread_t pid_thread = RT_NULL;
@@ -80,10 +80,10 @@ void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
         rt_pwm_set(pwm2, PWM_CHANNEL2, period,(rt_uint32_t) pwm_2);
 }
 
-
+float error=0,ierror=0,derror=0,errorlast=0;
 void pid_compute(int val)
 {
-    static float error=0,ierror=0,derror=0,errorlast=0;
+
 
     error = middle*1.0 -val;
     ierror=ierror+error;
@@ -114,9 +114,10 @@ int pid_set(int argc,char **argv)
 }
 MSH_CMD_EXPORT(pid_set,pid parameter set);
 
+rt_uint32_t num=0;
 void pid_thread_entry(void *parameter)
 {
-    rt_uint32_t num=0;
+
     while(1)
     {
         speed = period*pulse/100;
@@ -146,6 +147,16 @@ int pid_init(void)
         return -RT_ERROR;
     }
     return RT_EOK;
+}
+
+void pid_clear(void)
+{
+    num = 0;
+    number=0;
+    error=0;
+    ierror=0;
+    derror=0;
+    errorlast=0;
 }
 
 

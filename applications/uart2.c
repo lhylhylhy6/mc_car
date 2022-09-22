@@ -16,13 +16,15 @@ rt_mutex_t number_protect = RT_NULL;
 rt_uint32_t number = 0;
 rt_thread_t pid_read_thread;
 
+int path[5]={0,0,2,2};
 
 rt_err_t pid_uart_rx_inter(rt_device_t dev,rt_size_t size)
 {
     rt_sem_release(rx_sem);
     return RT_EOK;
 }
-
+extern int a;
+extern int stop_flag;
 void pid_read_entry(void *parameter)
 {
       char ch;
@@ -53,8 +55,19 @@ void pid_read_entry(void *parameter)
                  }
                  else if(ch=='c')
                  {
-                     rt_kprintf("is turn\r\n");
-                     car_right();
+                     stop_flag = 0;
+                     static int path_num=0;
+                     switch(path[path_num])
+                     {
+                         case 0:break;
+                         case 1:car_left();break;
+                         case 2:car_right();break;
+                     }
+                     rt_kprintf("%d\r\n",path[path_num]);
+                     if(path_num==3)
+                         path_num = 0;
+
+                     path_num++;
                  }
                  else if(ch>='0'&&ch<='9')
                  {
