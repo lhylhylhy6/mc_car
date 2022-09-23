@@ -81,7 +81,7 @@ int car_stop(void)
     return RT_EOK;
 }
 
-extern struct rt_completion pid_completion;
+
 rt_uint16_t turn_num=600;
 
 
@@ -97,14 +97,14 @@ int car_turn_ex(int argc,char **argv)
     return RT_EOK;
 }
 
-
+extern rt_mutex_t pid_completion;
 int car_left(void)
 {
     extern struct rt_device_pwm * pwm1;
     extern struct rt_device_pwm * pwm2;
     extern rt_uint32_t period;
 
-    rt_completion_wait((struct rt_completion *)(&pid_completion), RT_WAITING_FOREVER);
+    rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
     rt_uint32_t level = rt_hw_interrupt_disable();
     rt_pwm_set(pwm1, PWM_CHANNEL1, period, 200000); //left
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 500000); //right
@@ -119,14 +119,14 @@ int car_left(void)
         }
     }
 
-    rt_completion_done((struct rt_completion *)(&pid_completion));
+    rt_mutex_release(pid_completion);
     pid_clear();
     rt_hw_interrupt_enable(level);
     rt_kprintf("turn left ok\r\n");
     return RT_EOK;
 }
 
-extern struct rt_completion turn_flag;
+
 int car_right(void)
 {
 
@@ -134,7 +134,7 @@ int car_right(void)
     extern struct rt_device_pwm * pwm2;
     extern rt_uint32_t period;
 
-    rt_completion_wait((struct rt_completion *)(&pid_completion), RT_WAITING_FOREVER);
+    rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
     rt_uint32_t level = rt_hw_interrupt_disable();
     rt_pwm_set(pwm1, PWM_CHANNEL1, period, 500000); //left
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 200000); //right
@@ -148,7 +148,7 @@ int car_right(void)
             }
         }
     }
-    rt_completion_done((struct rt_completion *)(&pid_completion));
+    rt_mutex_release(pid_completion);
     pid_clear();
 
     rt_hw_interrupt_enable(level);
@@ -163,8 +163,8 @@ int car_turn(void)
     extern struct rt_device_pwm * pwm2;
     extern rt_uint32_t period;
     my_pwm_enable();
-    rt_completion_wait((struct rt_completion *)(&pid_completion), RT_WAITING_FOREVER);
-    rt_uint32_t level = rt_hw_interrupt_disable();
+    rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
+    //rt_uint32_t level = rt_hw_interrupt_disable();
     rt_pin_write(AIN1_PIN, PIN_LOW);
     rt_pin_write(AIN2_PIN, PIN_HIGH);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
@@ -181,14 +181,14 @@ int car_turn(void)
             }
         }
     }
-    rt_completion_done((struct rt_completion *)(&pid_completion));
+    rt_mutex_release(pid_completion);
 
     pid_clear();
     rt_pin_write(AIN1_PIN, PIN_HIGH);
     rt_pin_write(AIN2_PIN, PIN_LOW);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
     rt_pin_write(BIN2_PIN, PIN_LOW);
-    rt_hw_interrupt_enable(level);
+    //rt_hw_interrupt_enable(level);
     rt_kprintf("turn ok\r\n");
     return RT_EOK;
 }

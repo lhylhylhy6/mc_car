@@ -89,7 +89,7 @@ rt_err_t pid_uart_init(void)
         return -1;
     }
     rt_device_set_rx_indicate(pid_uart, pid_uart_rx_inter);
-    pid_read_thread = rt_thread_create("pid_read_thread", pid_read_entry, 0, 1024, 10, 300);
+    pid_read_thread = rt_thread_create("pid_read_thread", pid_read_entry, 0, 1024, 7, 300);
     if(pid_read_thread)
     {
         rt_thread_startup(pid_read_thread);
