@@ -16,7 +16,18 @@ rt_mutex_t number_protect = RT_NULL;
 rt_uint32_t number = 0;
 rt_thread_t pid_read_thread;
 
-int path[5]={0,0,2,2};
+int path[8][4]={
+        {1,1,1,1},
+        {2,2,2,2},
+        {0,1,0,1},
+        {0,2,0,2},
+        {0,0,1,1},
+        {0,0,1,2},
+        {0,0,2,1},
+        {0,0,2,2}
+};
+int path_num=0;
+int path_switch=0;
 
 rt_err_t pid_uart_rx_inter(rt_device_t dev,rt_size_t size)
 {
@@ -52,16 +63,14 @@ void pid_read_entry(void *parameter)
          else if(ch=='c')
          {
              rt_kprintf("*********is cross *********\r\n");
-             static int path_num=0;
-             switch(path[path_num])
+
+             switch(path[path_switch][path_num])
              {
                  case 0:break;
                  case 1:car_left();break;
                  case 2:car_right();break;
              }
-             rt_kprintf("%d\r\n",path[path_num]);
-             if(path_num==3)
-                 path_num = 0;
+             rt_kprintf("%d\r\n",path[path_switch][path_num]);
 
              path_num++;
          }
@@ -89,7 +98,7 @@ rt_err_t pid_uart_init(void)
         return -1;
     }
     rt_device_set_rx_indicate(pid_uart, pid_uart_rx_inter);
-    pid_read_thread = rt_thread_create("pid_read_thread", pid_read_entry, 0, 1024, 7, 300);
+    pid_read_thread = rt_thread_create("pid_read_thread", pid_read_entry, 0, 1024, 5, 300);
     if(pid_read_thread)
     {
         rt_thread_startup(pid_read_thread);

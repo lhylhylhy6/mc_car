@@ -21,6 +21,7 @@
 
 extern int pulse;
 int arrive_flag=0;
+extern int path_switch;
 
 //设置车的基本速度
 int car_set_percent(int argc,char **argv)
@@ -164,7 +165,7 @@ int car_turn(void)
     extern rt_uint32_t period;
     my_pwm_enable();
     rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
-    //rt_uint32_t level = rt_hw_interrupt_disable();
+    rt_uint32_t level = rt_hw_interrupt_disable();
     rt_pin_write(AIN1_PIN, PIN_LOW);
     rt_pin_write(AIN2_PIN, PIN_HIGH);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
@@ -181,15 +182,27 @@ int car_turn(void)
             }
         }
     }
+    rt_hw_interrupt_enable(level);
     rt_mutex_release(pid_completion);
-
     pid_clear();
     rt_pin_write(AIN1_PIN, PIN_HIGH);
     rt_pin_write(AIN2_PIN, PIN_LOW);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
     rt_pin_write(BIN2_PIN, PIN_LOW);
-    //rt_hw_interrupt_enable(level);
     rt_kprintf("turn ok\r\n");
+
+    return RT_EOK;
+}
+
+int car_set_path(int argc,char **argv)
+{
+    if(argc==2)
+    {
+        path_switch = atoi(argv[1]);
+    }
+    else {
+        rt_kprintf("please input car_set_path <the path num>");
+    }
     return RT_EOK;
 }
 
@@ -202,5 +215,5 @@ MSH_CMD_EXPORT(car_left, car left);
 MSH_CMD_EXPORT(car_right, car right);
 MSH_CMD_EXPORT(car_turn, car turn);
 MSH_CMD_EXPORT(car_turn_ex,set turn delay times);
-
+MSH_CMD_EXPORT(car_set_path,set car path);
 #endif

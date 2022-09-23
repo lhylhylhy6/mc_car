@@ -127,7 +127,7 @@ void pid_thread_entry(void *parameter)
         rt_mutex_release(number_protect);
         dia = 0;
 
-        rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
+       rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
         pid_compute(num);
         rt_mutex_release(pid_completion);
 
