@@ -29,7 +29,7 @@ float kd = 5;
 float dia=0;
 
 rt_thread_t pid_thread = RT_NULL;
-struct rt_completion pid_completion;
+rt_mutex_t pid_completion;
 
 void pwm_limit(rt_int32_t * pwm1,rt_int32_t * pwm2)
 {
@@ -126,17 +126,18 @@ void pid_thread_entry(void *parameter)
         num = number;
         rt_mutex_release(number_protect);
         dia = 0;
-        rt_completion_wait(&pid_completion, RT_WAITING_FOREVER);
+
+        rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
         pid_compute(num);
-        rt_completion_done(&pid_completion);
+        rt_mutex_release(pid_completion);
+
         rt_thread_mdelay(10);
     }
 }
 
 int pid_init(void)
 {
-    rt_completion_init(&pid_completion);
-    rt_completion_done(&pid_completion);
+    pid_completion = rt_mutex_create("pid_compl", RT_IPC_FLAG_PRIO);
     pid_thread = rt_thread_create("pid_thread", pid_thread_entry, RT_NULL, 1024, 9, 300);
     if(pid_thread)
     {
