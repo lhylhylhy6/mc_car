@@ -23,7 +23,9 @@ rt_thread_t  thing_scan_thread = RT_NULL;
 ALIGN(RT_ALIGN_SIZE)
 
 extern int path[8][4];
-int a = 0,status = 0;
+int status = 0;
+int stop_pin = 0,scan_pin = 0,stop_compare = 0,scan_compare = 0;
+
 int thing_flag=0;
 
 #define EXT_PIN  GET_PIN(C, 8)
@@ -64,26 +66,41 @@ void irq_callback_test(void *args)
      {
         car_stop();
         overthemap();
+        stop_pin = rt_pin_read(EXT_PIN);
         stop_flag = 1;
      }
 
 }
-
+int nums = 0,nums2 = 0,nums3 = 0;
 void car_stop_entry(void *parameter)
 {
     while(1)
     {
-//        if(stop_flag == 1)
-//            overthemap();
+        for(int i=0;i<10;i++)
+        {
+             stop_compare = rt_pin_read(EXT_PIN);
+             if((stop_pin!=stop_compare))
+                 nums2++;
+             if(nums2>=4)
+             {
+                 stop_flag = 0;
+                 stop_num = 0;
+                 nums2 = 0;
+                 break;
+             }
+        }
+        nums2 = 0;
+        nums3 = 0;
         rt_thread_delay(200);
     }
 }
-int nums = 0;
+
 void thing_scan_irq(void *args)
 {
     take_num++;
     if(take_num == 1)
     {
+        scan_pin = rt_pin_read(STA_PIN);
         status = 1;
     }
 }
@@ -92,11 +109,21 @@ void  thing_scan_entry(void *parameter)
 {
     while(1)
     {
+        scan_compare = rt_pin_read(STA_PIN);
+        if(scan_pin!=scan_compare)
+            nums3++;
+        if(nums3>=4)
+        {
+            status = 0;
+            nums = 0;
+            nums3 = 0;
+            continue;
+        }
         if((status == 1)&&(rt_pin_read(STA_PIN) == PIN_LOW))
         {
             for(int i=0;i<10;i++)
             {
-                if(rt_pin_read(STA_PIN) == PIN_LOW)
+                if((rt_pin_read(STA_PIN) == PIN_LOW))
                 {
                     nums++;
                     if(nums>=9)
@@ -108,8 +135,10 @@ void  thing_scan_entry(void *parameter)
 
             }
             nums = 0;
+            nums2 = 0;
+            nums3 = 0;
         }
-        if(status == 1 && stop_flag==0 )
+        if(status == 1 && stop_flag==0)
         {
             car_forward();
         }
