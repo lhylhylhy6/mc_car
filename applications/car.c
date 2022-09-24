@@ -22,6 +22,8 @@
 extern int pulse;
 int arrive_flag=0;
 extern int path_switch;
+extern int path_num;
+extern int path[8][4];
 
 //设置车的基本速度
 int car_set_percent(int argc,char **argv)
@@ -111,7 +113,7 @@ int car_left(void)
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 500000); //right
     for(int i=0;i<3;i++)
     {
-        for(int ii=0;ii<1150;ii++)
+        for(int ii=0;ii<turn_num;ii++)
         {
             for(int iii=0;iii<1000;iii++)
             {
@@ -151,7 +153,6 @@ int car_right(void)
     }
     rt_mutex_release(pid_completion);
     pid_clear();
-
     rt_hw_interrupt_enable(level);
     rt_kprintf("turn right ok\r\n");
     return RT_EOK;
@@ -166,17 +167,19 @@ int car_turn(void)
     my_pwm_enable();
     rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
     rt_uint32_t level = rt_hw_interrupt_disable();
+
     rt_pin_write(AIN1_PIN, PIN_LOW);
     rt_pin_write(AIN2_PIN, PIN_HIGH);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
     rt_pin_write(BIN2_PIN, PIN_LOW);
+
     rt_pwm_set(pwm1, PWM_CHANNEL1, period, 300000); //left
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 300000); //right
     for(int i=0;i<4;i++)
     {
         for(int ii=0;ii<1150;ii++)
         {
-            for(int iii=0;iii<turn_num;iii++)
+            for(int iii=0;iii<600;iii++)
             {
 
             }

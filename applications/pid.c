@@ -25,7 +25,7 @@ rt_int32_t speed;
 int middle = 164;
 float kp = 200000;
 float ki = -2;
-float kd = 5;
+float kd = 3;
 float dia=0;
 
 rt_thread_t pid_thread = RT_NULL;
@@ -130,7 +130,6 @@ void pid_thread_entry(void *parameter)
        rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
         pid_compute(num);
         rt_mutex_release(pid_completion);
-
         rt_thread_mdelay(10);
     }
 }
