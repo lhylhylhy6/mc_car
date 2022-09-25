@@ -69,7 +69,7 @@ int car_forward(void)
     my_pwm_enable();
     return RT_EOK;
 }
-extern int arrive_flag;
+
 int car_stop(void)
 {
     LOG_D("now car is stop\r\n");
@@ -80,7 +80,6 @@ int car_stop(void)
     rt_pin_write(BIN2_PIN, PIN_LOW);
     my_pwm_disable();
     rt_kprintf("now car is stop\r\n");
-    arrive_flag = 1;
     return RT_EOK;
 }
 
@@ -113,7 +112,7 @@ int car_left(void)
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 500000); //right
     for(int i=0;i<3;i++)
     {
-        for(int ii=0;ii<turn_num;ii++)
+        for(int ii=0;ii<800;ii++)
         {
             for(int iii=0;iii<1000;iii++)
             {
@@ -179,12 +178,13 @@ int car_turn(void)
     {
         for(int ii=0;ii<1150;ii++)
         {
-            for(int iii=0;iii<600;iii++)
+            for(int iii=0;iii<950;iii++)
             {
 
             }
         }
     }
+
     rt_hw_interrupt_enable(level);
     rt_mutex_release(pid_completion);
     pid_clear();
