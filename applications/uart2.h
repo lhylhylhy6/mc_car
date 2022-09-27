@@ -18,5 +18,6 @@
 #define pid_uart_name "uart2"
 
 rt_err_t pid_uart_init(void);
+rt_err_t keyward_uart_init(void);
 
 #endif /* APPLICATIONS_UART2_H_ */

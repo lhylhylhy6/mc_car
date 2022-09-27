@@ -22,6 +22,7 @@ int main(void)
 {
     extern_interrupt_init();
     pid_uart_init();
+    keyward_uart_init();
     car_init();
     while (1)
     {
