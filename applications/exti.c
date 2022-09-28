@@ -32,26 +32,29 @@ int thing_flag=0;
 #define STA_PIN  GET_PIN(C, 7)
 extern int path_num;
 extern int path_switch;
+
+extern int o_path_num;
+extern int o_path[4];
 void overthemap(void) //0022 1100
 {
     path_num = 0;
     int temp[4]={0};
     for(int i=0;i<4;i++)
     {
-        if(path[path_switch][i]==1)
+        if(o_path[i]==1)
         {
-            path[path_switch][i]=2;
+            o_path[i]=2;
         }
-        else if(path[path_switch][i]==2)
+        else if(o_path[i]==2)
         {
-            path[path_switch][i]=1;
+            o_path[i]=1;
         }
-        temp[i] = path[path_switch][i];
+        temp[i] = o_path[i];
     }
     for(int i=0;i<4;i++)
     {
-        path[path_switch][i] = temp[3-i];
-        rt_kprintf("%d, ",path[path_switch][i]);
+        o_path[i] = temp[3-i];
+        rt_kprintf("%d, ",o_path[i]);
     }
     rt_kprintf("\r\n");
     rt_kprintf("over map ok!\r\n");

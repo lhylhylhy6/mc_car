@@ -25,6 +25,10 @@ extern int path_switch;
 extern int path_num;
 extern int path[8][4];
 
+extern int o_path_num;
+
+rt_uint8_t return_flag;
+
 //设置车的基本速度
 int car_set_percent(int argc,char **argv)
 {
@@ -186,6 +190,8 @@ int car_turn(void)
     }
 
     rt_hw_interrupt_enable(level);
+    return_flag=1;
+    o_path_num=0;
     rt_mutex_release(pid_completion);
     pid_clear();
     rt_pin_write(AIN1_PIN, PIN_HIGH);
