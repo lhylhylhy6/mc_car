@@ -16,10 +16,12 @@
 #include <rtdbg.h>
 #include "car_pwm.h"
 #include <exti.h>
+#include "led.h"
 
 
 int main(void)
 {
+    led_init();
     extern_interrupt_init();
     pid_uart_init();
     keyward_uart_init();
