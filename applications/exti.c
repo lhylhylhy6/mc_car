@@ -22,7 +22,7 @@ rt_thread_t  thing_scan_thread = RT_NULL;
 
 ALIGN(RT_ALIGN_SIZE)
 
-extern int path[8][4];
+//extern int path[8][4];
 int status = 0;
 int stop_pin = 0,scan_pin = 0,stop_compare = 0,scan_compare = 0;
 
@@ -30,15 +30,24 @@ int thing_flag=0;
 
 #define EXT_PIN  GET_PIN(C, 8)
 #define STA_PIN  GET_PIN(C, 7)
-extern int path_num;
-extern int path_switch;
+
 
 extern int o_path_num;
 extern int o_path[4];
+extern rt_uint8_t cross_num;
 void overthemap(void) //0022 1100
 {
-    path_num = 0;
     int temp[4]={0};
+    if(cross_num==1)
+    {
+        o_path[1]=o_path[0];
+        o_path[2]=o_path[0];
+        o_path[3]=o_path[0];
+    }
+    else if(cross_num==2)
+    {
+        o_path[3]=o_path[1];//0 1 1 1 //1 2 2 0
+    }
     for(int i=0;i<4;i++)
     {
         if(o_path[i]==1)
@@ -145,7 +154,7 @@ void  thing_scan_entry(void *parameter)
         {
             car_forward();
         }
-        if(status == 2)
+        if(status == 2 && stop_flag==1)
         {
             car_turn();
             stop_num = 0;

@@ -22,7 +22,7 @@ struct rt_device_pwm * pwm1 = RT_NULL;
 struct rt_device_pwm * pwm2 = RT_NULL;
 
 rt_uint32_t period = 1000000 ;
-rt_uint32_t pulse = 30;
+rt_uint32_t pulse = 22;
 
 int pwm_init(void)
 {

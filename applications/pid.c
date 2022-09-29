@@ -76,6 +76,7 @@ void pwm_abs(rt_int32_t pwm_1,rt_int32_t pwm_2)
         pwm_limit(&pwm_1, &pwm_2);
 //        my_pwm_set_pulse(pwm1, pwm_1);
 //        my_pwm_set_pulse(pwm2, pwm_2);
+        //rt_kprintf("--%d-%d--\r\n",pwm_1,pwm_2);
         rt_pwm_set(pwm1, PWM_CHANNEL1, period,(rt_uint32_t) pwm_1);
         rt_pwm_set(pwm2, PWM_CHANNEL2, period,(rt_uint32_t) pwm_2);
 }
@@ -127,7 +128,7 @@ void pid_thread_entry(void *parameter)
         rt_mutex_release(number_protect);
         dia = 0;
 
-       rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
+        rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
         pid_compute(num);
         rt_mutex_release(pid_completion);
         rt_thread_mdelay(10);

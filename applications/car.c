@@ -64,8 +64,14 @@ int car_init(void)
     return ret;
 }
 
+extern struct rt_device_pwm * pwm1;
+extern struct rt_device_pwm * pwm2;
+extern rt_uint32_t period;
+
 int car_forward(void)
 {
+    rt_pwm_set(pwm1, PWM_CHANNEL1, period, 300000); //left
+    rt_pwm_set(pwm2, PWM_CHANNEL2, period, 300000); //right
     rt_pin_write(AIN1_PIN, PIN_HIGH);
     rt_pin_write(AIN2_PIN, PIN_LOW);
     rt_pin_write(BIN1_PIN, PIN_HIGH);
@@ -88,7 +94,7 @@ int car_stop(void)
 }
 
 
-rt_uint16_t turn_num=600;
+rt_uint16_t turn_num=1300;
 
 
 int car_turn_ex(int argc,char **argv)
@@ -106,10 +112,6 @@ int car_turn_ex(int argc,char **argv)
 extern rt_mutex_t pid_completion;
 int car_left(void)
 {
-    extern struct rt_device_pwm * pwm1;
-    extern struct rt_device_pwm * pwm2;
-    extern rt_uint32_t period;
-
     rt_mutex_take(pid_completion, RT_WAITING_FOREVER);
     rt_uint32_t level = rt_hw_interrupt_disable();
     rt_pwm_set(pwm1, PWM_CHANNEL1, period, 200000); //left
@@ -146,7 +148,7 @@ int car_right(void)
     rt_pwm_set(pwm2, PWM_CHANNEL2, period, 200000); //right
     for(int i=0;i<3;i++)
     {
-        for(int ii=0;ii<1250;ii++)
+        for(int ii=0;ii<1600;ii++)
         {
             for(int iii=0;iii<1000;iii++)
             {
@@ -203,6 +205,7 @@ int car_turn(void)
     return RT_EOK;
 }
 
+#if 0
 int car_set_path(int argc,char **argv)
 {
     if(argc==2)
@@ -214,6 +217,7 @@ int car_set_path(int argc,char **argv)
     }
     return RT_EOK;
 }
+#endif
 
 #if CAR_MSH_ENABLE
 
@@ -224,5 +228,5 @@ MSH_CMD_EXPORT(car_left, car left);
 MSH_CMD_EXPORT(car_right, car right);
 MSH_CMD_EXPORT(car_turn, car turn);
 MSH_CMD_EXPORT(car_turn_ex,set turn delay times);
-MSH_CMD_EXPORT(car_set_path,set car path);
+//MSH_CMD_EXPORT(car_set_path,set car path);
 #endif

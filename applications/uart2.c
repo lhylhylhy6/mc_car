@@ -22,9 +22,13 @@ extern rt_uint8_t cross_num;
 extern rt_uint8_t first_num;
 extern rt_uint8_t map_info[5][4][2];
 
-int o_path_num=0;
-int o_path[4];
+extern rt_uint8_t cross_enable;
+extern rt_uint8_t temp_info[2];
 
+int o_path_num=0;
+int o_path[4]={0,0,0,0};
+
+#if 0
 int path[8][4]={
         {1,1,1,1},
         {2,2,2,2},
@@ -37,6 +41,8 @@ int path[8][4]={
 };
 int path_num=0;
 int path_switch=0;
+
+#endif
 
 int select_side(void)
 {
@@ -51,12 +57,13 @@ int select_side(void)
     }
     return renum;
 }
+
 rt_err_t pid_uart_rx_inter(rt_device_t dev,rt_size_t size)
 {
     rt_sem_release(rx_sem);
     return RT_EOK;
 }
-
+int side=0;
 void pid_read_entry(void *parameter)
 {
       char ch;
@@ -85,58 +92,72 @@ void pid_read_entry(void *parameter)
          else if(ch=='c')
          {
              rt_kprintf("*********is cross *********\r\n");
-             if(return_flag==0)
-             {
-                 if(first_num==1||first_num==2)
-                 {
-                     switch(first_num)
-                   {
-                       case 1:car_left();break;
-                       case 2:car_right();break;
-                   }
-                     rt_kprintf("%d\r\n",first_num);
-                 }
-                 else
-                 {
-                      cross_num++;
-                      int side = select_side();
-                      if(cross_num==4)
+           if(cross_enable==1)
+           {
+               cross_num++;
+               if(return_flag==0)
+                {
+                    if(first_num==1||first_num==2)
+                    {
+                        o_path[o_path_num]=first_num;
+                        o_path_num++;
+                        switch(first_num)
                       {
-                          if(side==0)
-                          {
-                              int ii=0,l_num=0;
-                              for(ii=0;ii<4;ii++)
-                              {
-                                  if(map_info[cross_num-1][ii][1]==1)
-                                          l_num++;
-                              }
-                              if(l_num==1)
-                                  side=1;
-                              else
-                                  side=2;
-                          }
-                      }
-                      o_path[o_path_num]=side;
-                      o_path_num++;
-                      switch(side)
-                      {
-                          case 0:break;
                           case 1:car_left();break;
                           case 2:car_right();break;
                       }
-                      rt_kprintf("%d\r\n",side);
-                 }
-             }
-             else
-             {
-                 switch(o_path[o_path_num])
-               {
-                   case 0:break;
-                   case 1:car_left();break;
-                   case 2:car_right();break;
-               }
-                 o_path_num++;
-             }
+                        rt_kprintf("%d\r\n",first_num);
+                    }
+                    else
+                    {
+                        side = temp_info[1];
+                        if(cross_num==3)
+                        {
+                            if(temp_info[1]==0)
+                                side=1;
+                        }
+
+                         temp_info[0]=0;
+                         temp_info[1]=0;
+//                         if(cross_num==4)
+//                         {
+//                             if(side==0)
+//                             {
+//                                 int ii=0,l_num=0;
+//                                 for(ii=0;ii<4;ii++)
+//                                 {
+//                                     if(map_info[cross_num-1][ii][1]==1)
+//                                             l_num++;
+//                                 }
+//                                 if(l_num==1)
+//                                     side=1;
+//                                 else
+//                                     side=2;
+//                             }
+//                         }
+                         o_path[o_path_num]=side;
+                         o_path_num++;
+                         switch(side)
+                         {
+                             case 0:break;
+                             case 1:car_left();break;
+                             case 2:car_right();break;
+                         }
+                         rt_kprintf("%d\r\n",side);
+                    }
+                }
+                else
+                {
+                    switch(o_path[o_path_num])
+                  {
+                      case 0:break;
+                      case 1:car_left();break;
+                      case 2:car_right();break;
+                  }
+                    o_path_num++;
+                }
+           }
+
          }
          else if(ch>='0'&&ch<='9')
          {
